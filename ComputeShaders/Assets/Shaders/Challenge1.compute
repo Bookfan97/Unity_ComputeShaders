@@ -5,17 +5,19 @@
 // with cs.SetTexture
 RWTexture2D<float4> Result;
 //Create a float4 to hold the rectangle that defines the square
-
+float4 rect;
 //Return 1 if pt is in the rect parameter and 0 otherwise
 float inSquare( float2 pt, float4 rect ){
-    return 0.0;
+    float horz = step(rect.x, pt.x) - step(rect.x + rect.z, pt.x);
+    float vert = step(rect.y, pt.y) - step(rect.y + rect.w, pt.y);;
+    return horz * vert;
 }
 
 [numthreads(8,8,1)]
 void Square (uint3 id : SV_DispatchThreadID)
 {
 	//Call the inSquare function to set res
-    float res = 0;
+    float res = inSquare((float2)id.xy, rect);
 
     Result[id.xy] = float4(0.0, 0.0, res, 1.0);
 }

@@ -31,6 +31,10 @@ public class Challenge1 : MonoBehaviour
 
 		//Create a Vector4 with parameters x, y, width, height
         //Pass this to the shader using SetVector
+        int halfRes = texResolution >> 1;
+        int quarterRes = texResolution >> 2;
+        Vector4 rect = new Vector4(quarterRes, quarterRes, halfRes, halfRes);
+        shader.SetVector("rect", rect);
         
         shader.SetTexture(kernelHandle, "Result", outputTexture);
        
