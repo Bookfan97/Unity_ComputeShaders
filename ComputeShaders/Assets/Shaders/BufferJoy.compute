@@ -4,6 +4,14 @@
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
+struct circle
+{
+	float2 origin;
+	float2 velocity;
+	float2 radius;
+};
+
+StructuredBuffer<circle> circlesBuffer;
 shared RWTexture2D<float4> Result;
 
 float4 clearColor;
@@ -57,9 +65,13 @@ void drawCircle( int2 centre, int radius ) {
 [numthreads(32,1,1)]
 void Circles (uint3 id : SV_DispatchThreadID)
 {
-	int2 centre = (int2)(random2((float)id.x + time) * (float)texResolution);
-	int radius = (int)(random((float)id.x) * 30);
+	int2 centre = (int2)(circlesBuffer[id.x].origin + circlesBuffer[id.x].velocity * time);
+	while (centre.x>texResolution) centre.x -= texResolution;
+	while (centre.x<0) centre.x += texResolution;
+	while (centre.y>texResolution) centre.y -= texResolution;
+	while (centre.y<0) centre.y += texResolution;
 	
+	uint radius = (int)circlesBuffer[id.x].radius;
 	drawCircle( centre, radius );
 }
 
